@@ -40,7 +40,7 @@ ${SCRIPTS}/mongodb.sh
 
 ${SCRIPTS}/nodejs.sh
 
-${SCRIPTS}/imagick.sh
+${SCRIPTS}/gmagick.sh
 
 ${SCRIPTS}/xdebug.sh
 
