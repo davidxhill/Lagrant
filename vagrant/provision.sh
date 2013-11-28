@@ -48,7 +48,7 @@ ${SCRIPTS}/phpunit.sh
 
 ${SCRIPTS}/composer.sh
 
-if [ $DATABASE_NAME != "_null" ];
+if [ -n "$DATABASE_NAME" ];
 then
     ${SCRIPTS}/${DATABASE_TYPE}_createdb.sh $DATABASE_NAME $DATABASE_ROOT_PASSWORD
 fi
@@ -59,11 +59,11 @@ fi
 if [ ! -a "/vagrant/composer.json" ];
 then
     ${SCRIPTS}/laravel_create.sh $PROJECT_PATH $ENV_NAME
-    if [ $DATABASE_NAME != "_null" ];
+    if [ -n "$DATABASE_NAME" ];
     then
         ${SCRIPTS}/laravel_set_db.sh $PROJECT_PATH $ENV_NAME $DATABASE_TYPE $DATABASE_NAME $DATABASE_ROOT_PASSWORD
     fi
-    ${SCRIPTS}/laravel_dev_packages.sh $PROJECT_PATH $ENV_NAME
+    ${SCRIPTS}/laravel_packages.sh $PROJECT_PATH $ENV_NAME
 else
     ${SCRIPTS}/laravel_migrate.sh $PROJECT_PATH $ENV_NAME
 fi
