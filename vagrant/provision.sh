@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-# TODO!
-# mariadb
-# postgresql
-# xhprof
-# ruby
-# bower
-# grunt
-# less
-# YUI compressor
-# coffeescript
-# DART
-# apache
+ #TODO!
+ #mariadb
+ #postgresql
+ #xhprof
+ #ruby
+ #bower
+ #grunt
+ #less
+ #YUI compressor
+ #coffeescript
+ #DART
+ #apache
 
 SCRIPTS=/vagrant/vagrant/scripts
 PROJECT_PATH=/vagrant
@@ -20,6 +20,7 @@ ENV_NAME=$1
 DATABASE_TYPE=$2
 DATABASE_ROOT_PASSWORD=$3
 DATABASE_NAME=$4
+EDIT_PERMISSIONS=$5
 
 echo "--- Setting up system ---"
 
@@ -27,7 +28,7 @@ ${SCRIPTS}/init.sh $ENV_NAME
 
 ${SCRIPTS}/php.sh
 
-# web server MUST be installed immediately after PHP
+ #web server MUST be installed immediately after PHP
 ${SCRIPTS}/nginx.sh
 
 ${SCRIPTS}/documentroot.sh
@@ -66,8 +67,8 @@ then
     ${SCRIPTS}/${DATABASE_TYPE}_createdb.sh $DATABASE_NAME $DATABASE_ROOT_PASSWORD
 fi
 
-# We assume that if there is no composer.json it is raw new project
-# Otherwise project already exists and we need to migrate it
+ #We assume that if there is no composer.json it is raw new project
+ #Otherwise project already exists and we need to migrate it
 
 if [ ! -a "/vagrant/composer.json" ];
 then
@@ -79,4 +80,13 @@ then
     ${SCRIPTS}/laravel_packages.sh $PROJECT_PATH $ENV_NAME
 else
     ${SCRIPTS}/laravel_migrate.sh $PROJECT_PATH $ENV_NAME
+fi
+
+if [ "${EDIT_PERMISSIONS}" = "true" ];
+then
+    ${SCRIPTS}/mysql_permission.sh
+    echo 'mysql permisssions set;'
+else
+    echo "vVVv FAILED! vVVv"
+    echo ${EDIT_PERMISSIONS}
 fi
