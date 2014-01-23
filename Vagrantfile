@@ -17,11 +17,19 @@ DATABASE_CREATE = true
 DATABASE_NAME = 'lagrant'
 
 # Set permissions to allow standard connections through SequelPro and Artisan Migration
-EDIT_PERMISSIONS ='true'
+EDIT_PERMISSIONS = true
+
+# Should we bring the bower.js?
+CREATE_BOWER = true
+
+# Should we bring in Grunt file?
+CREATE_GRUNT = true
 
 # What is the name of environment of this VM?
 LOCAL_ENV_NAME = 'dev'
 
+# Should we set vim preferences?
+SET_VIM_PREFERENCES = true
 
 #########################
 # Vagrant configuration #
@@ -38,6 +46,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.network :forwarded_port, guest: 80, host: 8080
 
     config.vm.network :forwarded_port, guest: 3306, host: 3306
+
+    config.vm.network :forwarded_port, guest: 35729, host: 35729
 
     config.vm.synced_folder "./", "/vagrant", id: "vagrant-root", :owner => "vagrant", :group => "www-data"
 
@@ -61,7 +71,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.provision :shell do |shell|
         shell.path = "vagrant/provision.sh"
-        shell.args = LOCAL_ENV_NAME + " " + DATABASE_TYPE + " " + DATABASE_ROOT_PASSWORD + ( DATABASE_CREATE ? (" " + DATABASE_NAME) : " _null" ) + " " + EDIT_PERMISSIONS
+        shell.args = LOCAL_ENV_NAME + " "  + (EDIT_PERMISSIONS  ? "true" : " _null") + " " + (CREATE_GRUNT ? "true" : " _null") + " " + (CREATE_BOWER ? "true" : " _null") +  " " + (SET_VIM_PREFERENCES ? "true" : " _null") + " " + DATABASE_TYPE + " " + DATABASE_ROOT_PASSWORD + ( DATABASE_CREATE ? (" " + DATABASE_NAME) : " _null" )
     end
 
     # If true, then any SSH connections made will enable agent forwarding.

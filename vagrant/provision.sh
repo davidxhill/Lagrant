@@ -17,10 +17,13 @@ SCRIPTS=/vagrant/vagrant/scripts
 PROJECT_PATH=/vagrant
 
 ENV_NAME=$1
-DATABASE_TYPE=$2
-DATABASE_ROOT_PASSWORD=$3
-DATABASE_NAME=$4
-EDIT_PERMISSIONS=$5
+EDIT_PERMISSIONS=$2
+CREATE_GRUNT=$3
+CREATE_BOWER=$4
+SET_VIM_PREFERENCES=$5
+DATABASE_TYPE=$6
+DATABASE_ROOT_PASSWORD=$7
+DATABASE_NAME=$8
 
 echo "--- Setting up system ---"
 
@@ -46,10 +49,6 @@ ${SCRIPTS}/bower.sh
 ${SCRIPTS}/grunt.sh
 ${SCRIPTS}/grunt-autoprefixer.sh
 
-${SCRIPTS}/phantomjs.sh
-
-${SCRIPTS}/less.sh
-
 ${SCRIPTS}/coffeescript.sh
 
 ${SCRIPTS}/ruby.sh
@@ -60,7 +59,13 @@ ${SCRIPTS}/xdebug.sh
 
 ${SCRIPTS}/phpunit.sh
 
+${SCRIPTS}/sass.sh
+
 ${SCRIPTS}/composer.sh
+
+# Temp Removal
+#${SCRIPTS}/phantomjs.sh
+#${SCRIPTS}/less.sh
 
 if [ -n "$DATABASE_NAME" ];
 then
@@ -77,16 +82,34 @@ then
     then
         ${SCRIPTS}/laravel_set_db.sh $PROJECT_PATH $ENV_NAME $DATABASE_TYPE $DATABASE_NAME $DATABASE_ROOT_PASSWORD
     fi
+    #removing longggg load creation time for testing
     ${SCRIPTS}/laravel_packages.sh $PROJECT_PATH $ENV_NAME
 else
     ${SCRIPTS}/laravel_migrate.sh $PROJECT_PATH $ENV_NAME
 fi
 
+# Setting mysql permissions if true
 if [ "${EDIT_PERMISSIONS}" = "true" ];
 then
     ${SCRIPTS}/mysql_permission.sh
-    echo 'mysql permisssions set;'
-else
-    echo "vVVv FAILED! vVVv"
-    echo ${EDIT_PERMISSIONS}
+    echo 'mysql permissions set;'
 fi
+
+# Setting Package and Gruntfile if true
+if [ ! -f /vagrant/Gruntfile.js ] && [ "${CREATE_GRUNT}" = 'true' ] ;
+then
+
+    if [ ! -f "/vagrant/package.json" ] ;
+    then 
+        ${SCRIPTS}/node_package_setup.sh
+    fi
+
+    ${SCRIPTS}/grunt_setup.sh
+fi
+
+# Setting Vim Preferences if true
+if [ ! -f /home/vagrant/.vimrc.local ] && [ ${SET_VIM_PREFERENCES} = 'true' ] ;
+then
+    ${SCRIPTS}/vim.sh
+fi
+
