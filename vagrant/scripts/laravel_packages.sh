@@ -15,14 +15,16 @@ cd ${PROJECT_PATH}
 # composer require --no-update rtablada/package-installer:dev-master
 
 composer require --dev --no-update way/generators:dev-master way/laravel-test-helpers:dev-master barryvdh/laravel-ide-helper:1.*
-composer require --dev --no-update fzaninotto/faker:dev-master codeception/codeception:* phpunit/phpunit=3.7.*
+composer require --dev --no-update fzaninotto/faker:dev-master codeception/codeception:* 
+composer require --dev --no-update phpunit/phpunit:3.7.*
+composer require --dev --no-update itsgoingd/clockwork:dev-master
 
 # changing timeout...had issues on lower internet connections
 COMPOSER_CONFIG_ANCHOR='"config": {'
 COMPOSER_CONFIG_REPLACE_STR=$COMPOSER_CONFIG_ANCHOR"\n"'            "COMPOSER_PROCESS_TIMEOUT":600'
 sed -i "s/$COMPOSER_CONFIG_ANCHOR/$COMPOSER_CONFIG_REPLACE_STR" composer.json
 
-composer update --prefer-source
+composer update --prefer-dist
 
 ################################
 # update configs
@@ -38,8 +40,16 @@ cd ${PROJECT_PATH}/app/config
 
 REPLACE_ANCHOR="'Illuminate\\\Workbench\\\WorkbenchServiceProvider',"
 
-REPLACE_STR=$REPLACE_ANCHOR"\n\n        'Way\\\Generators\\\GeneratorsServiceProvider',"
+REPLACE_STR=$REPLACE_ANCHOR"\n\n        'Way\\\Generators\\\GeneratorsServiceProvider',\n\n       'Clockwork\\\Support\\\Laravel\\\ClockworkServiceProvider',"
 sed -i "s/$REPLACE_ANCHOR/$REPLACE_STR/" app.php
+
+################################
+# setting facades
+################################
+
+REPLACE_ANCHOR_ALIASES="=> 'Illuminate\\\Support\\\Facades\\\View',"
+REPLACE_STR_ALIASES=$REPLACE_ANCHOR_ALIASES"\n       'Clockwork' => 'Clockwork\\\Support\\\Laravel\\\Facade',"
+sed -i "s/$REPLACE_ANCHOR_ALIASES/$REPLACE_STR_ALIASES/" app.php
 
 ################################
 # create a start file for development environment
@@ -56,6 +66,9 @@ echo "App::register('Way\\Generators\\GeneratorsServiceProvider');" >> ${ENV_NAM
 echo "App::register('Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider');" >> ${ENV_NAME}.php
 
 echo -e '\n' >> ${ENV_NAME}.php
+
+cd ${PROJECT_PATH}
+composer dump-autoload -o
 
 ################################
 # register aliases

@@ -38,10 +38,6 @@ ${SCRIPTS}/documentroot.sh
 
 ${SCRIPTS}/${DATABASE_TYPE}.sh $DATABASE_ROOT_PASSWORD
 
-${SCRIPTS}/redis.sh
-
-${SCRIPTS}/mongodb.sh
-
 ${SCRIPTS}/nodejs.sh
 
 ${SCRIPTS}/bower.sh
@@ -68,6 +64,9 @@ ${SCRIPTS}/beanstalkd.sh
 # Temp Removal
 #${SCRIPTS}/phantomjs.sh
 #${SCRIPTS}/less.sh
+#${SCRIPTS}/redis.sh
+#${SCRIPTS}/mongodb.sh
+
 
 if [ -n "$DATABASE_NAME" ];
 then
