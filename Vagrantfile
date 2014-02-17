@@ -36,6 +36,10 @@ SET_VIM_PREFERENCES = true
 #########################
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    
+    config.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", "1024"]
+    end
 
     config.vm.box = "precise64"
 
